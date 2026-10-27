@@ -1,0 +1,14 @@
+# Track only the static app entry files and its assets.
+*
+!.gitignore
+!index.html
+!style.css
+!app.js
+!assets/
+!assets/**
+
+# Explicit exclusions requested.
+test.txt
+test.txtx
+gacha app/
+gacha-app/
