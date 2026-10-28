@@ -22,6 +22,15 @@ let currentKuisIndex = 0;
         let courseRewardsClaimed = JSON.parse(localStorage.getItem('faunahaven_course_rewards') || '{}');
         let dialogInputCallback = null;
 
+        /** KODE PROMO DUMMY untuk pengujian fitur redeem di versi demo. */
+        const dummyPromoCodes = {
+            FAUNA2026: { reward: 1000, label: 'Bonus pembukaan Fauna Discovery' },
+            ECOHEBAT: { reward: 500, label: 'Bonus konservator aktif' },
+            KONSERVASI100: { reward: 100, label: 'Bonus aksi konservasi' },
+            DISCOVERY2026: { reward: 750, label: 'Bonus penjelajah materi' }
+        };
+        let redeemedPromoCodes = JSON.parse(localStorage.getItem('faunahaven_redeemed_promos') || '{}');
+
         /**
          * Menampilkan dialog notifikasi aplikasi.
          * @param {*} title Parameter title.
@@ -876,21 +885,30 @@ let currentKuisIndex = 0;
          * Memproses kode promo.
          */
         function prosesTukarKodePromo() {
-            let kode = document.getElementById('promoCodeInput').value.trim();
+            /** Normalisasi input agar kode tidak sensitif terhadap huruf besar/kecil. */
+            const kode = document.getElementById('promoCodeInput').value.trim().toUpperCase();
             if (!kode) {
                 bukaDialog('Masukkan kode promo terlebih dahulu.');
                 return;
             }
-            if (kode) {
-                if (kode.toUpperCase() === "FAUNA2026") {
-                    koin += 1000;
-                    updateCoin();
-                    tutupModalPromo();
-                    bukaDialog("🎉 Selamat! Kode Promo Berhasil Ditukarkan: +1000 Koin!");
-                } else {
-                    bukaDialog("❌ Kode Promo tidak valid atau sudah kadaluarsa.");
-                }
+            const promo = dummyPromoCodes[kode];
+            if (!promo) {
+                bukaDialog('Kode promo tidak valid atau sudah kedaluwarsa.');
+                return;
             }
+            const accountKey = (currentUser || 'guest').toLowerCase();
+            const redeemed = redeemedPromoCodes[accountKey] || [];
+            if (redeemed.includes(kode)) {
+                bukaDialog('Kode promo ini sudah pernah digunakan pada akunmu.');
+                return;
+            }
+            redeemed.push(kode);
+            redeemedPromoCodes[accountKey] = redeemed;
+            localStorage.setItem('faunahaven_redeemed_promos', JSON.stringify(redeemedPromoCodes));
+            koin += promo.reward;
+            updateCoin();
+            tutupModalPromo();
+            bukaDialog('Kode promo berhasil ditukarkan! 🎉', `${promo.label}\nReward: +${promo.reward} 🪙`);
         }
 
         // --- FEATURE: NAVIGASI PERPINDAHAN BANNER GACHA ---

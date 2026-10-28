@@ -343,6 +343,18 @@
         body.dark-theme .nav-item:hover { background: #25344a; }
         body.dark-theme .nav-item.active { background: #214735; color: #b9f6c6; }
         body.dark-theme .section-title { background: #20344a; color: #e5edf5; }
+        body.dark-theme #gacha > h2,
+        body.dark-theme #ecodex > h2,
+        body.dark-theme #leaderboard > h2,
+        body.dark-theme #pengaturan h2,
+        body.dark-theme #teks-soal { color: #e5edf5 !important; }
+        body.dark-theme #gacha > p,
+        body.dark-theme #leaderboard > p { color: #b8c7d8 !important; }
+        body.dark-theme #gacha .gacha-nav-btn:not(.active) { color: #d4e1ee; }
+        body.dark-theme #gacha .banner-stock-overlay,
+        body.dark-theme #gacha .banner-info-badge { color: #f4f8fc; }
+        body.dark-theme #pengaturan .settings-group h3,
+        body.dark-theme #profil .profile-card h2 { color: #d6e8ff !important; }
         body.dark-theme .quest-card, body.dark-theme .home-feature-list { background: #203a31; color: #c7f2d0; border-color: #4caf75; }
         body.dark-theme .home-stat, body.dark-theme .module-card, body.dark-theme .course-card, body.dark-theme .mission-card, body.dark-theme .faq-item, body.dark-theme .rank-card, body.dark-theme .settings-card, body.dark-theme .profile-card { background: #1e2c3e; border-color: #34485e; color: #e5edf5; }
         body.dark-theme #profil h2 { color: #d6e8ff !important; }
