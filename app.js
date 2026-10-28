@@ -5,10 +5,13 @@
  */
 let currentKuisIndex = 0;
         let skorKuis = 0;
+        let timerAntiCheat = null;
+        let opsiTerpilihIndex = null;
         let koin = 5000;
         let koleksi = [];
         let currentUser = localStorage.getItem('faunahaven_user') || null;
         let isAuthenticated = Boolean(currentUser);
+        let authMode = 'login';
         let registeredUsers = JSON.parse(localStorage.getItem('faunahaven_accounts') || '[]');
         let modulSaatIni = 0;
         let questProgress = 0;
