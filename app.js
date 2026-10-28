@@ -492,7 +492,10 @@ let currentKuisIndex = 0;
                 localStorage.setItem('faunahaven_course_rewards', JSON.stringify(courseRewardsClaimed));
                 koin += reward;
                 updateCoin();
-                bukaDialog('Course selesai! 🎉', `Selamat! Kamu telah menyelesaikan seluruh materi "${activeLearningCourse.title}".\n\nReward penyelesaian: +${reward} 🪙`);
+                const completedCourseTitle = activeLearningCourse.title;
+                tutupRuangBelajar();
+                bukaDialog('Course selesai! 🎉', `Selamat! Kamu telah menyelesaikan seluruh materi "${completedCourseTitle}".\n\nReward penyelesaian: +${reward} 🪙`);
+                return;
             }
             if (activeLearningModule < modules.length - 1) activeLearningModule++;
             renderRuangBelajar();
