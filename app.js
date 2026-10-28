@@ -1,3 +1,8 @@
+/**
+ * STATE APLIKASI
+ * Variabel di bawah menyimpan sesi pengguna, saldo, koleksi, progress belajar,
+ * dan state sementara yang dipakai oleh fitur interaktif.
+ */
 let currentKuisIndex = 0;
         let skorKuis = 0;
         let koin = 5000;
@@ -14,6 +19,11 @@ let currentKuisIndex = 0;
         let courseRewardsClaimed = JSON.parse(localStorage.getItem('faunahaven_course_rewards') || '{}');
         let dialogInputCallback = null;
 
+        /**
+         * Menampilkan dialog notifikasi aplikasi.
+         * @param {*} title Parameter title.
+         * @param {*} message Parameter message.
+         */
         function bukaDialog(title, message) {
             if (message === undefined) {
                 message = title;
@@ -26,11 +36,21 @@ let currentKuisIndex = 0;
             modal.style.display = 'flex';
         }
 
+        /**
+         * Menutup dialog notifikasi.
+         */
         function tutupDialog() {
             const modal = document.getElementById('modalAppDialog');
             if (modal) modal.style.display = 'none';
         }
 
+        /**
+         * Menampilkan dialog input teks.
+         * @param {*} title Parameter title.
+         * @param {*} message Parameter message.
+         * @param {*} placeholder Parameter placeholder.
+         * @param {*} callback Parameter callback.
+         */
         function bukaInputDialog(title, message, placeholder, callback) {
             dialogInputCallback = callback;
             document.getElementById('inputDialogTitle').innerText = title;
@@ -42,6 +62,9 @@ let currentKuisIndex = 0;
             setTimeout(() => input.focus(), 0);
         }
 
+        /**
+         * Mengambil nilai input dan menjalankan callback.
+         */
         function submitInputDialog() {
             const callback = dialogInputCallback;
             const value = document.getElementById('inputDialogValue').value.trim();
@@ -49,9 +72,28 @@ let currentKuisIndex = 0;
             if (callback) callback(value);
         }
 
+        /**
+         * Menutup dialog input.
+         */
         function tutupInputDialog() {
             document.getElementById('modalInputDialog').style.display = 'none';
             dialogInputCallback = null;
+        }
+
+        /**
+         * Menampilkan atau menyembunyikan password.
+         * @param {*} inputId Parameter inputId.
+         * @param {*} button Parameter button.
+         */
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isVisible = input.type === 'text';
+            input.type = isVisible ? 'password' : 'text';
+            button.classList.toggle('is-visible', !isVisible);
+            const label = isVisible ? 'Tampilkan password' : 'Sembunyikan password';
+            button.setAttribute('aria-label', label);
+            button.title = label;
         }
 
         const rarityWeight = { 'MUR': 6, 'UR': 5, 'SSR': 4, 'SR': 3, 'R': 2, 'N': 1 };
@@ -228,6 +270,7 @@ let currentKuisIndex = 0;
             ...boxInvertebrata.prizes, boxInvertebrata.lastOne
         ];
 
+        /** KATALOG KURSUS: sumber data kartu kursus di halaman Beranda. */
         const courseCatalog = [
             { id: 1, category: 'Dasar Konservasi', icon: '🌱', provider: 'FaunaHeaven Academy', title: 'Pengantar Konservasi Satwa Indonesia', description: 'Kenali prinsip dasar konservasi, ancaman kepunahan, dan cara sederhana ikut melindungi satwa.', level: 'Pemula', duration: '2 jam', rating: '4.9', lessons: ['Mengapa keanekaragaman hayati penting', 'Mengenal status konservasi IUCN', 'Aksi konservasi di sekitar kita'] },
             { id: 2, category: 'Mamalia', icon: '🦏', provider: 'Kelas Mamalia', title: 'Badak Jawa dan Ekosistem Ujung Kulon', description: 'Pelajari habitat, perilaku, dan strategi perlindungan mamalia paling langka di Nusantara.', level: 'Pemula', duration: '1,5 jam', rating: '4.8', lessons: ['Biologi Badak Jawa', 'Ekosistem Ujung Kulon', 'Studi kasus perlindungan habitat'] },
@@ -243,6 +286,7 @@ let currentKuisIndex = 0;
         let activeLearningModule = 0;
         let courseProgress = JSON.parse(localStorage.getItem('faunahaven_course_progress') || '{}');
 
+        /** MATERI KURSUS: modul pembelajaran untuk setiap course yang terdaftar. */
         const courseModules = {
             1: [
                 { title: 'Mengapa konservasi penting?', summary: 'Memahami hubungan keanekaragaman hayati dengan kehidupan manusia.', body: '<p>Konservasi bukan hanya tentang menyelamatkan satwa langka. Konservasi menjaga hubungan antara habitat, spesies, dan masyarakat agar tetap seimbang.</p><div class="learning-callout"><b>Inti materi:</b> setiap spesies memiliki peran ekologis, sehingga hilangnya satu spesies dapat memengaruhi seluruh ekosistem.</div>', takeaways: ['Konservasi melindungi spesies dan habitatnya.', 'Keanekaragaman hayati mendukung pangan, air, dan kesehatan.', 'Aksi kecil yang konsisten dapat membantu pemulihan alam.'] },
@@ -276,6 +320,9 @@ let currentKuisIndex = 0;
             ]
         };
 
+        /**
+         * Membuat filter kategori kursus.
+         */
         function renderCourseChips() {
             const categories = ['Semua', ...new Set(courseCatalog.map(course => course.category))];
             document.getElementById('courseChips').innerHTML = categories.map(category =>
@@ -283,12 +330,19 @@ let currentKuisIndex = 0;
             ).join('');
         }
 
+        /**
+         * Mengubah kategori aktif kursus.
+         * @param {*} category Parameter category.
+         */
         function filterCoursesByCategory(category) {
             activeCourseCategory = category;
             renderCourseChips();
             renderCourses();
         }
 
+        /**
+         * Merender kartu katalog kursus.
+         */
         function renderCourses() {
             if (!document.getElementById('courseGrid')) return;
             const query = (document.getElementById('courseSearch').value || '').toLowerCase().trim();
@@ -311,6 +365,10 @@ let currentKuisIndex = 0;
                 </article>`).join('') : '<div style="grid-column:1/-1; padding:35px; color:#718096;">Kursus tidak ditemukan. Coba kata kunci lain.</div>';
         }
 
+        /**
+         * Menampilkan detail kursus.
+         * @param {*} courseId Parameter courseId.
+         */
         function bukaDetailKursus(courseId) {
             selectedCourse = courseCatalog.find(course => course.id === courseId);
             if (!selectedCourse) return;
@@ -327,17 +385,32 @@ let currentKuisIndex = 0;
             document.getElementById('modalCourseDetail').style.display = 'flex';
         }
 
+        /**
+         * Menutup detail kursus.
+         */
         function tutupDetailKursus() { document.getElementById('modalCourseDetail').style.display = 'none'; }
 
+        /**
+         * Menjalankan proses getCourseModules.
+         * @param {*} courseId Parameter courseId.
+         */
         function getCourseModules(courseId) {
             const course = courseCatalog.find(item => item.id === courseId);
             return courseModules[courseId] || (course ? course.lessons.map(title => ({ title, summary: 'Materi inti kursus untuk memperkuat pemahamanmu.', body: `<p>${course.description}</p><div class="learning-callout"><b>Pelajari:</b> baca materi ini, catat ide penting, lalu tandai selesai.</div>`, takeaways: ['Pahami konsep utama materi.', 'Catat contoh yang relevan.', 'Hubungkan materi dengan aksi nyata.'] })) : []);
         }
 
+        /**
+         * Menjalankan proses getCourseCompleted.
+         * @param {*} courseId Parameter courseId.
+         */
         function getCourseCompleted(courseId) {
             return Array.isArray(courseProgress[courseId]) ? courseProgress[courseId] : [];
         }
 
+        /**
+         * Membuka ruang belajar kursus.
+         * @param {*} courseId Parameter courseId.
+         */
         function bukaRuangBelajar(courseId) {
             if (!requireLogin('membuka ruang belajar')) return;
             if (!enrolledCourses.includes(courseId)) return;
@@ -351,6 +424,9 @@ let currentKuisIndex = 0;
             renderRuangBelajar();
         }
 
+        /**
+         * Merender modul dan materi kursus.
+         */
         function renderRuangBelajar() {
             if (!activeLearningCourse) return;
             const modules = getCourseModules(activeLearningCourse.id);
@@ -376,12 +452,19 @@ let currentKuisIndex = 0;
                 <button class="learning-complete-btn" onclick="tandaiModulSelesai()">${completed.includes(activeLearningModule) ? '✓ Modul sudah selesai' : 'Tandai selesai & lanjut'}</button>`;
         }
 
+        /**
+         * Memilih modul kursus.
+         * @param {*} index Parameter index.
+         */
         function pilihModulBelajar(index) {
             if (!activeLearningCourse) return;
             activeLearningModule = index;
             renderRuangBelajar();
         }
 
+        /**
+         * Menandai modul selesai dan memberikan reward.
+         */
         function tandaiModulSelesai() {
             if (!activeLearningCourse) return;
             const completed = getCourseCompleted(activeLearningCourse.id);
@@ -402,11 +485,17 @@ let currentKuisIndex = 0;
             renderRuangBelajar();
         }
 
+        /**
+         * Menutup ruang belajar.
+         */
         function tutupRuangBelajar() {
             document.getElementById('modalCourseLearning').style.display = 'none';
             activeLearningCourse = null;
         }
 
+        /**
+         * Mendaftarkan pengguna ke kursus.
+         */
         function daftarKursusTerpilih() {
             if (!selectedCourse || !requireLogin('mendaftar kursus')) return;
             if (!enrolledCourses.includes(selectedCourse.id)) enrolledCourses.push(selectedCourse.id);
@@ -426,6 +515,9 @@ let currentKuisIndex = 0;
             { q: 'Bagaimana cara menghubungi tim FaunaHeaven?', a: 'Gunakan halaman Bantuan & FAQ ini sebagai panduan awal. Integrasi kontak eksternal dapat ditambahkan pada pengembangan berikutnya.' }
         ];
 
+        /**
+         * Merender FAQ.
+         */
         function renderFAQ() {
             const query = (document.getElementById('faqSearch')?.value || '').toLowerCase().trim();
             const results = faqData.filter(item => `${item.q} ${item.a}`.toLowerCase().includes(query));
@@ -436,6 +528,10 @@ let currentKuisIndex = 0;
                 </div>`).join('') : '<div style="padding:25px; color:#718096; text-align:center;">Pertanyaan tidak ditemukan.</div>';
         }
 
+        /**
+         * Membuka atau menutup jawaban FAQ.
+         * @param {*} index Parameter index.
+         */
         function toggleFAQ(index) {
             const item = document.getElementById(`faq-item-${index}`);
             if (!item) return;
@@ -443,6 +539,9 @@ let currentKuisIndex = 0;
             item.querySelector('.faq-question span:last-child').innerText = item.classList.contains('open') ? '−' : '＋';
         }
 
+        /**
+         * Merender misi harian.
+         */
         function renderMisi() {
             const uniqueCount = masterSatwa.filter(satwa => koleksi.some(item => item.name === satwa.name)).length;
             const missions = [
@@ -460,8 +559,14 @@ let currentKuisIndex = 0;
             }).join('');
         }
 
+        /**
+         * Memperbarui saldo koin.
+         */
         function updateCoin() { document.getElementById('coin-display').innerText = koin; updateProfilUI(); }
         
+        /**
+         * Mengambil data profil pengguna.
+         */
         function getProfileData() {
             if (!currentUser) return { name: 'Guest', avatar: '🎓', bio: 'Login untuk mengatur profilmu.' };
             try {
@@ -469,6 +574,9 @@ let currentKuisIndex = 0;
             } catch (error) { return {}; }
         }
 
+        /**
+         * Memperbarui tampilan profil.
+         */
         function updateProfilUI() {
             const profile = getProfileData();
             document.getElementById('profileUsername').innerText = profile.name || currentUser || 'Guest';
@@ -480,6 +588,9 @@ let currentKuisIndex = 0;
             document.getElementById('profileKoleksi').innerText = `${count}/36`;
         }
 
+        /**
+         * Membuka form edit profil.
+         */
         function bukaModalEditProfile() {
             if (!requireLogin('mengedit profil')) return;
             const profile = getProfileData();
@@ -490,10 +601,16 @@ let currentKuisIndex = 0;
             setTimeout(() => document.getElementById('editProfileName').focus(), 0);
         }
 
+        /**
+         * Menutup form edit profil.
+         */
         function tutupModalEditProfile() {
             document.getElementById('modalEditProfile').style.display = 'none';
         }
 
+        /**
+         * Menyimpan perubahan profil.
+         */
         function simpanProfil() {
             if (!requireLogin('menyimpan profil')) return;
             const name = document.getElementById('editProfileName').value.trim();
@@ -506,13 +623,24 @@ let currentKuisIndex = 0;
             bukaDialog('Profil berhasil diperbarui.');
         }
 
+        /**
+         * Membuka modal login.
+         */
         function bukaModalLogin() {
             ubahModeAuth(false, 'login');
             document.getElementById('modalLogin').style.display = 'flex';
             setTimeout(() => document.getElementById('loginUsername').focus(), 0);
         }
+        /**
+         * Menutup modal login.
+         */
         function tutupModalLogin() { document.getElementById('modalLogin').style.display = 'none'; }
 
+        /**
+         * Mengubah mode login dan daftar.
+         * @param {*} clearFields = true Parameter clearFields = true.
+         * @param {*} requestedMode = null Parameter requestedMode = null.
+         */
         function ubahModeAuth(clearFields = true, requestedMode = null) {
             authMode = requestedMode || (authMode === 'login' ? 'register' : 'login');
             const isRegister = authMode === 'register';
@@ -529,6 +657,10 @@ let currentKuisIndex = 0;
             }
         }
 
+        /**
+         * Memastikan pengguna sudah login.
+         * @param {*} action = 'melakukan aksi ini' Parameter action = 'melakukan aksi ini'.
+         */
         function requireLogin(action = 'melakukan aksi ini') {
             if (isAuthenticated && currentUser) return true;
             bukaDialog(`Silakan masuk akun terlebih dahulu untuk ${action}. Konten tetap dapat dilihat sebagai guest.`);
@@ -536,13 +668,41 @@ let currentKuisIndex = 0;
             return false;
         }
 
+        /**
+         * Memperbarui tombol header sesuai status login.
+         */
         function updateAuthUI() {
             const button = document.getElementById('btnHeaderLogin');
-            button.innerText = isAuthenticated ? currentUser : 'Masuk Akun';
-            button.title = isAuthenticated ? `Login sebagai ${currentUser}` : 'Masuk untuk menggunakan fitur interaktif';
+            if (isAuthenticated && currentUser) {
+                const profile = getProfileData();
+                const displayName = profile.name || currentUser;
+                button.className = 'btn-header-profile';
+                button.innerHTML = `<span class="header-profile-avatar">${profile.avatar || '🎓'}</span><span class="header-profile-name">${displayName}</span><span class="header-profile-chevron">⌄</span>`;
+                button.onclick = bukaProfilDariHeader;
+                button.title = 'Buka profil akun';
+                button.setAttribute('aria-label', `Buka profil akun ${displayName}`);
+            } else {
+                button.className = 'btn-header-login';
+                button.innerText = 'Masuk Akun';
+                button.onclick = bukaModalLogin;
+                button.title = 'Masuk untuk menggunakan fitur interaktif';
+                button.setAttribute('aria-label', 'Masuk Akun');
+            }
             document.getElementById('profileStatus').innerText = isAuthenticated ? 'Konservator Junior' : 'Guest — login untuk menyimpan progres';
         }
+
+        /**
+         * Membuka halaman profil.
+         */
+        function bukaProfilDariHeader() {
+            if (!requireLogin('membuka profil')) return;
+            switchTab('profil', null);
+        }
         
+        /**
+         * Menerapkan tema aplikasi.
+         * @param {*} theme Parameter theme.
+         */
         function setTheme(theme) {
             const isDark = theme === 'dark';
             document.body.classList.toggle('dark-theme', isDark);
@@ -558,14 +718,23 @@ let currentKuisIndex = 0;
             if (setting) setting.checked = isDark;
         }
 
+        /**
+         * Mengganti tema aktif.
+         */
         function toggleTheme() {
             setTheme(document.body.classList.contains('dark-theme') ? 'light' : 'dark');
         }
 
+        /**
+         * Memuat tema tersimpan.
+         */
         function applySavedTheme() {
             setTheme(localStorage.getItem('faunahaven_theme') || 'light');
         }
 
+        /**
+         * Memproses login.
+         */
         function prosesLogin() {
             let userIn = document.getElementById('loginUsername').value;
             let passwordIn = document.getElementById('loginPassword').value;
@@ -587,6 +756,9 @@ let currentKuisIndex = 0;
             }
         }
 
+        /**
+         * Memproses pendaftaran akun.
+         */
         function prosesDaftar() {
             const userIn = document.getElementById('registerUsername').value.trim();
             const passwordIn = document.getElementById('registerPassword').value;
@@ -608,6 +780,9 @@ let currentKuisIndex = 0;
             updateProfilUI();
         }
 
+        /**
+         * Mengakhiri sesi login.
+         */
         function logout() {
             currentUser = null;
             isAuthenticated = false;
@@ -617,6 +792,9 @@ let currentKuisIndex = 0;
             updateProfilUI();
         }
 
+        /**
+         * Mengklaim reward login.
+         */
         function klaimLogin() {
             if (!requireLogin('mengklaim reward login')) return;
             document.getElementById('modalLoginReward').style.display = 'none';
@@ -625,6 +803,11 @@ let currentKuisIndex = 0;
         }
 
         /* PERPINDAHAN TAB / HALAMAN UTAMA */
+        /**
+         * Mengganti tab aplikasi.
+         * @param {*} tabId Parameter tabId.
+         * @param {*} btnElement Parameter btnElement.
+         */
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.top-nav .nav-item').forEach(btn => btn.classList.remove('active'));
@@ -648,17 +831,30 @@ let currentKuisIndex = 0;
         }
 
         /* NAVIGASI MENU LAINNYA (GARIS 3) */
+        /**
+         * Membuka menu tambahan.
+         */
         function bukaMenuLainnya() {
             document.getElementById('moreMenuOverlay').style.display = 'flex';
         }
+        /**
+         * Menutup menu tambahan.
+         */
         function tutupMenuLainnya() {
             document.getElementById('moreMenuOverlay').style.display = 'none';
         }
+        /**
+         * Memilih halaman dari menu tambahan.
+         * @param {*} tabId Parameter tabId.
+         */
         function pilihMenuLainnya(tabId) {
             tutupMenuLainnya();
             switchTab(tabId, null);
         }
 
+        /**
+         * Membuka form kode promo.
+         */
         function tukarKodePromo() {
             if (!requireLogin('menukarkan kode promo')) return;
             document.getElementById('promoCodeInput').value = '';
@@ -666,10 +862,16 @@ let currentKuisIndex = 0;
             setTimeout(() => document.getElementById('promoCodeInput').focus(), 0);
         }
 
+        /**
+         * Menutup form kode promo.
+         */
         function tutupModalPromo() {
             document.getElementById('modalPromo').style.display = 'none';
         }
 
+        /**
+         * Memproses kode promo.
+         */
         function prosesTukarKodePromo() {
             let kode = document.getElementById('promoCodeInput').value.trim();
             if (!kode) {
@@ -689,6 +891,11 @@ let currentKuisIndex = 0;
         }
 
         // --- FEATURE: NAVIGASI PERPINDAHAN BANNER GACHA ---
+        /**
+         * Mengganti banner EcoKuji.
+         * @param {*} idBannerTarget Parameter idBannerTarget.
+         * @param {*} btnEl Parameter btnEl.
+         */
         function pindahBanner(idBannerTarget, btnEl) {
             document.querySelectorAll('.gacha-nav-btn').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
@@ -698,6 +905,10 @@ let currentKuisIndex = 0;
         }
 
         // --- FEATURE: RINCIAN CHANCE GACHA MODAL ---
+        /**
+         * Menampilkan rincian peluang hadiah.
+         * @param {*} tipe Parameter tipe.
+         */
         function bukaDetailChance(tipe) {
             let box;
             let namaKategori = "";
@@ -744,11 +955,17 @@ let currentKuisIndex = 0;
             document.getElementById('modalChanceGacha').style.display = 'flex';
         }
 
+        /**
+         * Menutup rincian peluang.
+         */
         function tutupDetailChance() {
             document.getElementById('modalChanceGacha').style.display = 'none';
         }
 
         // --- DASHBOARD MATERI ---
+        /**
+         * Merender kartu jurnal.
+         */
         function renderDaftarMateri() {
             ['mamalia', 'aves', 'reptilia', 'pisces', 'amphibia', 'invertebrata'].forEach(kat => {
                 let el = document.getElementById(`list-${kat}-edu`);
@@ -773,6 +990,10 @@ let currentKuisIndex = 0;
             });
         }
         
+        /**
+         * Membuka materi jurnal.
+         * @param {*} index Parameter index.
+         */
         function bacaMateri(index) {
             modulSaatIni = index;
             document.getElementById('main-dashboard').style.display = 'none';
@@ -800,6 +1021,9 @@ let currentKuisIndex = 0;
             }, 1000);
         }
 
+        /**
+         * Kembali ke beranda.
+         */
         function kembaliKeHome() {
             clearInterval(timerAntiCheat);
             document.getElementById('main-dashboard').style.display = 'block';
@@ -808,6 +1032,9 @@ let currentKuisIndex = 0;
         }
 
         // --- SISTEM KUIS MULTIPLE QUESTIONS ---
+        /**
+         * Memulai kuis.
+         */
         function mulaiKuis() {
             if (!requireLogin('mengerjakan kuis dan mendapatkan koin')) return;
             clearInterval(timerAntiCheat);
@@ -819,6 +1046,9 @@ let currentKuisIndex = 0;
             window.scrollTo(0,0);
         }
 
+        /**
+         * Merender soal kuis.
+         */
         function renderSoal() {
             opsiTerpilihIndex = null;
             const modul = modulEdukasi[modulSaatIni];
@@ -849,6 +1079,9 @@ let currentKuisIndex = 0;
             document.getElementById('quiz-msg').style.display = 'none';
         }
 
+        /**
+         * Memeriksa jawaban kuis dan reward.
+         */
         function submitJawaban() {
             if (!requireLogin('mengirim jawaban kuis')) return;
             if (opsiTerpilihIndex === null) { bukaDialog("Pilih jawaban dulu!"); return; }
@@ -897,12 +1130,18 @@ let currentKuisIndex = 0;
             }
         }
         
+        /**
+         * Berpindah ke soal berikutnya.
+         */
         function lanjutSoal() {
             currentKuisIndex++;
             renderSoal();
         }
 
         // --- ECOKUJI UI ---
+        /**
+         * Memperbarui tampilan EcoKuji.
+         */
         function renderKujiUI() {
             ['mamalia', 'aves', 'reptilia', 'pisces', 'amphibia', 'invertebrata'].forEach(t => {
                 let box;
@@ -914,6 +1153,11 @@ let currentKuisIndex = 0;
         }
 
         // --- GACHA PULL ---
+        /**
+         * Menjalankan penarikan EcoKuji.
+         * @param {*} tipe Parameter tipe.
+         * @param {*} jumlah Parameter jumlah.
+         */
         function tarikKuji(tipe, jumlah) {
             if (!requireLogin('menarik EcoKuji')) return;
             let biaya = jumlah * 100; 
@@ -932,6 +1176,11 @@ let currentKuisIndex = 0;
             if(jumlah===1) { kartuTahan = {...arr[0]}; popup1x(box, arr[0]); } else popup10x(arr);
         }
 
+        /**
+         * Menampilkan hasil penarikan satu kali.
+         * @param {*} box Parameter box.
+         * @param {*} h Parameter h.
+         */
         function popup1x(box, h) {
             let pop = document.getElementById('popupGacha1x'), boxEl = document.getElementById('gachaPopupBox'), acts = document.getElementById('dupActions'), cls = document.getElementById('btnTutupPopup');
             acts.style.display = 'none'; cls.style.display = 'none'; pop.style.display = 'flex'; boxEl.classList.add('is-rolling');
@@ -947,13 +1196,24 @@ let currentKuisIndex = 0;
                 if(isDup) acts.style.display = 'flex'; else { kartuTahan.qty=1; koleksi.push(kartuTahan); cls.style.display = 'block'; }
             }, 1500);
         }
+        /**
+         * Mengelola hadiah duplikat satu kali.
+         * @param {*} p Parameter p.
+         */
         function prosesDuplikat1x(p) {
             if (!requireLogin('mengelola hasil EcoKuji')) return;
             if(p==='konversi') koin+=100; else { let i = koleksi.findIndex(k=>k.name===kartuTahan.name); koleksi[i].qty++; }
             updateCoin(); tutupPopupGacha1x();
         }
+        /**
+         * Menutup popup gacha satu kali.
+         */
         function tutupPopupGacha1x() { document.getElementById('popupGacha1x').style.display = 'none'; document.querySelectorAll('.roll-btn').forEach(b => b.disabled = false); cekLast(); renderEcoDex(); }
 
+        /**
+         * Menampilkan hasil penarikan sepuluh kali.
+         * @param {*} arr Parameter arr.
+         */
         function popup10x(arr) {
             hasilGacha10x = arr; let pop = document.getElementById('popupGacha10x'), grid = document.getElementById('grid10xContainer'), acts = document.getElementById('actions10x');
             grid.innerHTML = ''; document.getElementById('title10x').innerText = 'Memutar 10x...'; acts.style.display = 'none';
@@ -967,6 +1227,10 @@ let currentKuisIndex = 0;
                 setTimeout(() => { document.getElementById(`i10-${i}`).classList.add('show'); if(i === arr.length-1) setTimeout(() => { document.getElementById('title10x').innerText = 'Hasil 10x!'; acts.style.display = 'flex'; }, 600); }, 300 * (i+1));
             });
         }
+        /**
+         * Mengelola hasil penarikan sepuluh kali.
+         * @param {*} p Parameter p.
+         */
         function proses10x(p) {
             if (!requireLogin('menyimpan atau mengonversi hasil EcoKuji')) return;
             let k_c=0, s_c=0;
@@ -974,6 +1238,9 @@ let currentKuisIndex = 0;
             else { hasilGacha10x.forEach(h => { let idx=koleksi.findIndex(k=>k.name===h.name); if(idx!==-1) { k_c++; koin+=100; } else { koleksi.push({...h, qty:1}); s_c++; } }); bukaDialog(`♻️ Selesai!\n📥 ${s_c} kartu baru disimpan.\n🪙 ${k_c} kartu duplikat dikonversi menjadi ${k_c*100} Koin.`); }
             updateCoin(); document.getElementById('popupGacha10x').style.display = 'none'; document.querySelectorAll('.roll-btn').forEach(b => b.disabled = false); cekLast(); renderEcoDex();
         }
+        /**
+         * Memproses hadiah terakhir.
+         */
         function cekLast() {
             if (pendingLastOne && requireLogin('mengambil hadiah terakhir')) {
                 bukaDialog(`🎉 LAST ONE PRIZE!\n⭐ ${pendingLastOne.name} (MUR)`);
@@ -984,6 +1251,9 @@ let currentKuisIndex = 0;
         }
 
         // --- FAUNADEX ENSIKLOPEDIA (DENGAN SORTING 36 SATWA) ---
+        /**
+         * Merender FaunaDex.
+         */
         function renderEcoDex() {
             const grid = document.getElementById('collection-grid'); grid.innerHTML = ''; let unlockCount = 0;
             
@@ -1021,6 +1291,10 @@ let currentKuisIndex = 0;
             });
         }
 
+        /**
+         * Menampilkan detail satwa.
+         * @param {*} nama Parameter nama.
+         */
         function bukaEnsiklopedia(nama) {
             let satwa = masterSatwa.find(s => s.name === nama); if(!satwa) return;
             document.getElementById('encycIcon').innerText = satwa.icon; document.getElementById('encycName').innerText = satwa.name; document.getElementById('encycRarity').innerText = satwa.rarity; document.getElementById('encycRarity').className = `rarity ${satwa.rarity}`;
@@ -1030,8 +1304,15 @@ let currentKuisIndex = 0;
             document.getElementById('encycHeader').style.background = bg; 
             document.getElementById('modalEnsiklopedia').style.display = 'flex';
         }
+        /**
+         * Menutup detail satwa.
+         */
         function tutupEnsiklopedia() { document.getElementById('modalEnsiklopedia').style.display = 'none'; }
 
+        /**
+         * Mengirim satwa duplikat.
+         * @param {*} namaHewan Parameter namaHewan.
+         */
         function kirimHadiah(namaHewan) {
             if (!requireLogin('mengirim hadiah')) return;
             bukaInputDialog('Kirim hadiah', `Kirim ${namaHewan} ke username:`, 'Masukkan username penerima', user => {
@@ -1046,6 +1327,9 @@ let currentKuisIndex = 0;
         }
 
         // --- LEADERBOARD ---
+        /**
+         * Merender papan peringkat.
+         */
         function renderLeaderboard() {
             let uniqueCount = 0;
             masterSatwa.forEach(satwa => { if (koleksi.find(k => k.name === satwa.name)) uniqueCount++; });

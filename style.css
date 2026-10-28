@@ -318,8 +318,19 @@
         .form-group { text-align: left; margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+        .password-field { position: relative; }
+        .password-field .form-control { padding-right: 46px; }
+        .password-toggle { position: absolute; top: 50%; right: 10px; width: 30px; height: 30px; transform: translateY(-50%); border: 0; border-radius: 6px; background: transparent; color: #718096; cursor: pointer; }
+        .password-toggle::before { content: "\1F441"; font-size: 18px; line-height: 1; }
+        .password-toggle.is-visible::after { content: ""; position: absolute; top: 14px; left: 5px; width: 20px; height: 2px; transform: rotate(-40deg); border-radius: 2px; background: currentColor; }
+        .password-toggle:hover, .password-toggle:focus-visible { background: #e8f1fb; color: #0d47a1; outline: none; }
         .btn-header-login { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .btn-header-login:hover { background: white; color: #1b5e20; }
+        .btn-header-profile { display: inline-flex; align-items: center; gap: 7px; max-width: 180px; padding: 5px 10px 5px 6px; overflow: hidden; border: 1px solid rgba(255,255,255,.75); border-radius: 22px; background: rgba(255,255,255,.16); color: white; font-size: 12px; font-weight: bold; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+        .btn-header-profile:hover { background: white; color: #17324d; transform: translateY(-1px); }
+        .header-profile-avatar { display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 25px; flex: 0 0 25px; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 15px; }
+        .header-profile-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .header-profile-chevron { font-size: 14px; opacity: .8; }
         .btn-theme-toggle { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; background: rgba(255,255,255,.16); color: white; cursor: pointer; font-size: 0; line-height: 1; transition: background .2s ease, color .2s ease, transform .2s ease; }
         .btn-theme-toggle::before { content: "\263E"; font-family: Arial, sans-serif; font-size: 20px; }
         .btn-theme-toggle.is-dark::before { content: "\2600"; }
@@ -343,6 +354,7 @@
         body.dark-theme .course-hero h1, body.dark-theme .home-stat strong { color: #d6e8ff; }
         body.dark-theme .course-hero p { color: #e1edf8; }
         body.dark-theme .course-search, body.dark-theme .faq-search, body.dark-theme .form-control { background: #111b2a; color: #e5edf5; border-color: #536b85; }
+        body.dark-theme .password-toggle:hover, body.dark-theme .password-toggle:focus-visible { background: #203a52; color: #b9d9ff; }
         body.dark-theme .course-chip { background: #1e2c3e; color: #c7d7e8; border-color: #536b85; }
         body.dark-theme .course-chip.active, body.dark-theme .course-chip:hover { background: #2e7d5a; color: white; }
         body.dark-theme .gacha-nav-bar { background: #1e2c3e; border-color: #34485e; }
