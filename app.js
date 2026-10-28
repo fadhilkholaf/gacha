@@ -27,6 +27,7 @@ let currentKuisIndex = 0;
             FAUNA2026: { reward: 1000, label: 'Bonus pembukaan Fauna Discovery' },
             ECOHEBAT: { reward: 500, label: 'Bonus konservator aktif' },
             KONSERVASI100: { reward: 100, label: 'Bonus aksi konservasi' },
+            67: { reward: 67000, label: 'Bonus aksi konservasi' },
             DISCOVERY2026: { reward: 750, label: 'Bonus penjelajah materi' }
         };
         let redeemedPromoCodes = JSON.parse(localStorage.getItem('faunahaven_redeemed_promos') || '{}');
